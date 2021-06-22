@@ -33,7 +33,7 @@ namespace WebAdvert.SearchApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -45,6 +45,9 @@ namespace WebAdvert.SearchApi
             app.UseRouting();
 
             app.UseAuthorization();
+            loggerFactory.AddAWSProvider(Configuration.GetAWSLoggingConfigSection(),
+                formatter: (loglevel, message, exception) => $"[{DateTime.UtcNow} {loglevel} {message} {exception?.Message} {exception?.StackTrace}]"
+            );
 
             app.UseEndpoints(endpoints =>
             {
